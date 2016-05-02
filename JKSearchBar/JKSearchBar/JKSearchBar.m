@@ -109,7 +109,7 @@
         
         CGFloat x = _textField.frame.size.width/2 - titleSize.width/2-25;
         if (!_iconCenterView) {
-            _iconCenterView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"JKSearchBar_ICON"]];
+            _iconCenterView = [[UIImageView alloc]initWithImage: _iconImage ? _iconImage : [UIImage imageNamed:@"JKSearchBar_ICON"]];
             _iconCenterView.contentMode = UIViewContentModeScaleAspectFit;
             [_textField addSubview:_iconCenterView];
         }
@@ -126,7 +126,7 @@
         
         [UIView animateWithDuration:1 animations:^{
             _textField.textAlignment = NSTextAlignmentLeft;
-            _iconView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"JKSearchBar_ICON"]];
+            _iconView = [[UIImageView alloc]initWithImage:_iconImage ? _iconImage : [UIImage imageNamed:@"JKSearchBar_ICON"]];
             _iconView.contentMode = UIViewContentModeScaleAspectFit;
             _textField.leftView = _iconView;
             _textField.leftViewMode =  UITextFieldViewModeAlways;
@@ -150,13 +150,45 @@
     _textField.borderStyle = textBorderStyle;
 }
 
+-(void)setTfCornerRadius:(CGFloat)tfCornerRadius{
+    _tfCornerRadius = tfCornerRadius;
+    _textField.layer.cornerRadius = tfCornerRadius;
+}
+
+-(void)setTfMasksToBounds:(BOOL)tfMasksToBounds{
+    _tfMasksToBounds = tfMasksToBounds;
+    _textField.layer.masksToBounds = tfMasksToBounds;
+}
+
+-(void)setTfBorderColor:(UIColor*)tfBorderColor{
+    _tfBorderColor = tfBorderColor;
+    _textField.layer.borderColor = tfBorderColor.CGColor;
+}
+
+-(void)setTfBorderWidth:(CGFloat)tfBorderWidth{
+    _tfBorderWidth = tfBorderWidth;
+    _textField.layer.borderWidth = tfBorderWidth;
+}
+
+-(void)setTfBackgroundColor:(UIColor *)tfBackgroundColor{
+    _tfBackgroundColor = tfBackgroundColor;
+    _textField.backgroundColor = tfBackgroundColor;
+}
+
 -(void)setTextColor:(UIColor *)textColor{
     _textColor = textColor;
     [_textField setTextColor:_textColor];
 }
 -(void)setIconImage:(UIImage *)iconImage{
     _iconImage = iconImage;
-    ((UIImageView*)_textField.leftView).image = _iconImage;
+    
+    if (!_textField.leftView) {
+        ((UIImageView*)_textField.leftView).image = _iconImage;
+    }
+    
+    if (!_iconCenterView) {
+        _iconCenterView.image = _iconImage;
+    }
 }
 -(void)setPlaceholder:(NSString *)placeholder{
     _placeholder = placeholder;
@@ -168,6 +200,40 @@
     _backgroundImage = backgroundImage;
     
 }
+
+-(void)setCancelButton:(UIButton *)cancelButton{
+    if (_cancelButton) {
+        [_cancelButton removeFromSuperview];
+    }
+    _cancelButton = cancelButton;
+    [self addSubview:cancelButton];
+}
+
+-(void)setCbTitleFont:(UIFont *)cbTitleFont{
+    _cbTitleFont = cbTitleFont;
+    _cancelButton.titleLabel.font = cbTitleFont;
+}
+
+-(void)setCbTitleColor:(UIColor *)cbTitleColor{
+    _cbTitleColor = cbTitleColor;
+    [_cancelButton setTitleColor:cbTitleColor forState:UIControlStateNormal];
+}
+
+-(void)setCbBackgroundColor:(UIColor *)cbBackgroundColor{
+    _cbBackgroundColor = cbBackgroundColor;
+    [_cancelButton setBackgroundColor:cbBackgroundColor];
+}
+
+-(void)setCbBackgroundImage:(UIImage *)cbBackgroundImage{
+    _cbBackgroundImage = cbBackgroundImage;
+    [_cancelButton setBackgroundImage:cbBackgroundImage forState:UIControlStateNormal];
+}
+
+-(void)setCbTitle:(NSString *)cbTitle{
+    _cbTitle = cbTitle;
+    [_cancelButton setTitle:cbTitle forState:UIControlStateNormal];
+}
+
 -(void)setKeyboardType:(UIKeyboardType)keyboardType{
     _keyboardType = keyboardType;
     _textField.keyboardType = _keyboardType;
@@ -226,11 +292,14 @@
     if(_iconAlignTemp == JKSearchBarIconAlignCenter){
         self.iconAlign = JKSearchBarIconAlignLeft;
     }
-    [UIView animateWithDuration:0.1 animations:^{
-        _cancelButton.hidden = NO;
-        _textField.frame = CGRectMake(7, 7, _cancelButton.frame.origin.x-7, 30);
-        //        _textField.transform = CGAffineTransformMakeTranslation(-_cancelButton.frame.size.width,0);
-    }];
+    
+    if (!_cancelButtonDisabled) {
+        [UIView animateWithDuration:0.1 animations:^{
+            _cancelButton.hidden = NO;
+            _textField.frame = CGRectMake(7, 7, _cancelButton.frame.origin.x-7, 30);
+            //        _textField.transform = CGAffineTransformMakeTranslation(-_cancelButton.frame.size.width,0);
+        }];
+    }
     if (self.delegate && [self.delegate respondsToSelector:@selector(searchBarShouldBeginEditing:)])
     {
         return [self.delegate searchBarShouldBeginEditing:self];
@@ -260,11 +329,13 @@
         self.iconAlign = JKSearchBarIconAlignCenter;
     }
     
-    [UIView animateWithDuration:0.1 animations:^{
-        _cancelButton.hidden = YES;
-        _textField.frame = CGRectMake(7, 7, self.frame.size.width-7*2, 30);
-        //        _textField.transform = CGAffineTransformMakeTranslation(-_cancelButton.frame.size.width,0);
-    }];
+    if (!_cancelButtonDisabled) {
+        [UIView animateWithDuration:0.1 animations:^{
+            _cancelButton.hidden = YES;
+            _textField.frame = CGRectMake(7, 7, self.frame.size.width-7*2, 30);
+            //        _textField.transform = CGAffineTransformMakeTranslation(-_cancelButton.frame.size.width,0);
+        }];
+    }
     
     if (self.delegate && [self.delegate respondsToSelector:@selector(searchBarTextDidEndEditing:)])
     {

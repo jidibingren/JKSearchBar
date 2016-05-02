@@ -55,6 +55,11 @@
     [searchBarCode.cancelButton setTitle:@"取消" forState:UIControlStateNormal];
     [self.view addSubview:searchBarCode];
     
+//    searchBarCode.cancelButtonDisabled = YES;
+    searchBarCode.cbTitleColor = [UIColor redColor];
+    searchBarCode.iconAlign = JKSearchBarIconAlignCenter;
+    searchBarCode.tfBorderColor = [UIColor redColor];
+    
 }
 
 -(BOOL)searchBarShouldBeginEditing:(JKSearchBar *)searchBar{

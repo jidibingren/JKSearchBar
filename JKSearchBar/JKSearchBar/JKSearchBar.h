@@ -41,12 +41,24 @@ typedef NS_ENUM(NSUInteger, JKSearchBarIconAlign) {
 @property(nonatomic,retain) UIImage                *backgroundImage;
 
 @property(nonatomic,retain) UIButton *cancelButton; //lazy
+@property(nonatomic,strong) UIFont   *cbTitleFont;
+@property(nonatomic,strong) NSString *cbTitle;
+@property(nonatomic,strong) UIColor  *cbTitleColor;
+@property(nonatomic,strong) UIColor  *cbBackgroundColor;
+@property(nonatomic,strong) UIImage  *cbBackgroundImage;
 
 
 @property(nonatomic,assign) UITextBorderStyle       textBorderStyle;
+@property(nonatomic,assign) CGFloat                 tfCornerRadius;
+@property(nonatomic,assign) BOOL                    tfMasksToBounds;
+@property(nonatomic,assign) CGFloat                 tfBorderWidth;
+@property(nonatomic,strong) UIColor                 *tfBorderColor;
+@property(nonatomic,strong) UIColor                 *tfBackgroundColor;
+
 @property(nonatomic)        UIKeyboardType          keyboardType;
 @property(nonatomic)        JKSearchBarIconAlign    iconAlign;     //text aligh model
 
+@property(nonatomic,assign) BOOL                    cancelButtonDisabled;
 
 @property (nonatomic, readwrite, retain) UIView *inputAccessoryView;
 @property (nonatomic, readwrite, retain) UIView *inputView;
