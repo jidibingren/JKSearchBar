@@ -12,6 +12,7 @@
     UITextField *_textField;
     UIImageView *_iconView;
     UIImageView *_iconCenterView;
+    UIImageView *_backgroundImageView;
     JKSearchBarIconAlign _iconAlignTemp;
 }
 
@@ -22,25 +23,79 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        [self buidView];
+        [self buidViewWithFrame:frame];
     }
     return self;
 }
 
 -(void)awakeFromNib{
     [super awakeFromNib];
-    [self buidView];
+    [self buidViewWithFrame:self.frame];
 }
 -(void)willMoveToSuperview:(UIView *)newSuperview{
     if (newSuperview) {
         
     }
 }
--(void)buidView{
-    self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, self.frame.size.width, 44);
+-(void)buidViewWithFrame:(CGRect)frame{
+//    self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, self.frame.size.width, 44);
+    
+//    _cancelButton = ({
+//        UIButton *cancelButton = [UIButton buttonWithType:UIButtonTypeCustom];
+//        cancelButton.frame = CGRectMake(self.frame.size.width-60, 7, 60, 30);
+//        cancelButton.titleLabel.font = [UIFont systemFontOfSize:14.0f];
+//        [cancelButton addTarget:self
+//                         action:@selector(cancelButtonTouched)
+//               forControlEvents:UIControlEventTouchUpInside];
+//        [cancelButton setTitle:@"取消" forState:UIControlStateNormal];
+//        [cancelButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+//        
+//        cancelButton.autoresizingMask =UIViewAutoresizingFlexibleLeftMargin;
+//        
+//        cancelButton;
+//    });
+//    [self addSubview:_cancelButton];
+    
+    
+//    _textField = ({
+//        UITextField *textField = [[UITextField alloc] initWithFrame:CGRectMake(7, 7, self.frame.size.width-7*2, 30)];
+//        textField.delegate = self;
+//        textField.borderStyle = UITextBorderStyleNone;
+//        textField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+//        textField.returnKeyType = UIReturnKeySearch;
+//        textField.enablesReturnKeyAutomatically = YES;
+//        textField.font = [UIFont systemFontOfSize:14.0f];
+//        textField.clearButtonMode = UITextFieldViewModeWhileEditing;
+//        [textField addTarget:self
+//                      action:@selector(textFieldDidChange:)
+//            forControlEvents:UIControlEventEditingChanged];
+//        textField.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+//        
+//        //for dspa
+//        textField.borderStyle=UITextBorderStyleNone;
+//        textField.layer.cornerRadius= 3.0f;
+//        textField.layer.masksToBounds=YES;
+//        textField.layer.borderColor = [[UIColor colorWithWhite:0.783 alpha:1.000] CGColor];
+//        textField.layer.borderWidth= 0.5f;
+//        textField.backgroundColor = [UIColor whiteColor];
+//        
+//        textField;
+//    });
+//    [self addSubview:_textField];
+    
+    self.frame = frame;
+    
+    _backgroundImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+    
+    _backgroundImageView.contentMode = UIViewContentModeScaleToFill;
+    
+    _backgroundImageView.backgroundColor = [UIColor clearColor];
+    
+    [self addSubview:_backgroundImageView];
+    
     _cancelButton = ({
         UIButton *cancelButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        cancelButton.frame = CGRectMake(self.frame.size.width-60, 7, 60, 30);
+        cancelButton.frame = CGRectMake(self.frame.size.width-60, 7, 60, frame.size.height-7*2);
         cancelButton.titleLabel.font = [UIFont systemFontOfSize:14.0f];
         [cancelButton addTarget:self
                          action:@selector(cancelButtonTouched)
@@ -56,7 +111,7 @@
     
     
     _textField = ({
-        UITextField *textField = [[UITextField alloc] initWithFrame:CGRectMake(7, 7, self.frame.size.width-7*2, 30)];
+        UITextField *textField = [[UITextField alloc] initWithFrame:CGRectMake(7, 7, self.frame.size.width-7*2, frame.size.height-7*2)];
         textField.delegate = self;
         textField.borderStyle = UITextBorderStyleNone;
         textField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
@@ -96,7 +151,7 @@
     if (_iconAlign == JKSearchBarIconAlignCenter) {
         _iconCenterView.hidden = NO;
         
-        _textField.frame = CGRectMake(7, 7, self.frame.size.width-7*2, 30);
+        _textField.frame = CGRectMake(7, 7, self.frame.size.width-7*2, self.frame.size.height-7*2);
         _textField.textAlignment = NSTextAlignmentCenter;
         
         CGSize titleSize;
@@ -108,13 +163,14 @@
         }
         
         CGFloat x = _textField.frame.size.width/2 - titleSize.width/2-25;
+        
         if (!_iconCenterView) {
             _iconCenterView = [[UIImageView alloc]initWithImage: _iconImage ? _iconImage : [UIImage imageNamed:@"JKSearchBar_ICON"]];
             _iconCenterView.contentMode = UIViewContentModeScaleAspectFit;
             [_textField addSubview:_iconCenterView];
         }
         if (x>0) {
-            _iconCenterView.frame = CGRectMake(x, 0, _iconCenterView.frame.size.width, _iconCenterView.frame.size.height);
+            _iconCenterView.frame = CGRectMake(x, (_textField.frame.size.height-_iconCenterView.frame.size.height)/2, _iconCenterView.frame.size.width, _iconCenterView.frame.size.height);
             _textField.leftView = nil;
         }else{
             _iconCenterView.hidden = YES;
@@ -143,6 +199,7 @@
 -(void)setTextFont:(UIFont *)textFont{
     _textFont = textFont;
     [_textField setFont:_textFont];
+    [self setIconAlign:_iconAlign];
 }
 
 -(void)setTextBorderStyle:(UITextBorderStyle)textBorderStyle{
@@ -198,7 +255,7 @@
 
 -(void)setBackgroundImage:(UIImage *)backgroundImage{
     _backgroundImage = backgroundImage;
-    
+    _backgroundImageView.image = backgroundImage;
 }
 
 -(void)setCancelButton:(UIButton *)cancelButton{
@@ -296,7 +353,7 @@
     if (!_cancelButtonDisabled) {
         [UIView animateWithDuration:0.1 animations:^{
             _cancelButton.hidden = NO;
-            _textField.frame = CGRectMake(7, 7, _cancelButton.frame.origin.x-7, 30);
+            _textField.frame = CGRectMake(7, 7, _cancelButton.frame.origin.x-7, self.frame.size.height-7*2);
             //        _textField.transform = CGAffineTransformMakeTranslation(-_cancelButton.frame.size.width,0);
         }];
     }
@@ -332,7 +389,7 @@
     if (!_cancelButtonDisabled) {
         [UIView animateWithDuration:0.1 animations:^{
             _cancelButton.hidden = YES;
-            _textField.frame = CGRectMake(7, 7, self.frame.size.width-7*2, 30);
+            _textField.frame = CGRectMake(7, 7, self.frame.size.width-7*2, self.frame.size.height-7*2);
             //        _textField.transform = CGAffineTransformMakeTranslation(-_cancelButton.frame.size.width,0);
         }];
     }
